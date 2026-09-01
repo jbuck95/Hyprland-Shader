@@ -1,0 +1,66 @@
+MIT License
+
+Copyright (c) 2026 liixini
+Copyright (c) 2026 Jan H. (Hyprland/Wayland adaptation)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+### Third-Party Shader Notices & Attributions
+
+This repository includes, adapts, and builds upon shaders and transitions from the following open-source projects and authors:
+
+#### 1. liixini/shaders
+* **Source:** https://github.com/liixini/shaders
+* **License:** MIT License (Copyright (c) 2026 liixini)
+* **Description:** Base shader collection and initial transition adaptations, originally ported to niri.
+* **Adapted for Hyprland/Wayland by:** Jan H.
+
+#### 2. gl-transitions
+* **Source:** https://github.com/gl-transitions/gl-transitions
+* **License:** MIT License (Copyright (c) Gaëtan Renaudeau)
+* **Ported to niri by:** liixini
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `circle`, `ripple` and related geometric transitions.
+
+#### 3. skwd-wall
+* **Source:** https://github.com/skwd-org/skwd-wall
+* **License:** MIT License
+* **Ported to niri by:** liixini
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `bounce`, `colour-distance`, `crazy-parametric`, `crosshatch`, `crosswarp`, `directional`, `directional-wipe`, `fadecolor`, `flyeye`, `heat-melt`, `ink-splash`, `inkwell-drop`, `morph`, `overexposure`, `perlin`, `pixelfade-wave`, `plasma-flow`, `polar-function`, `polka-dots-curtain`, `randomsquares`, `soft-warp-fade`, `static-fade`, `voronoi-shatter`, `wave-warp`.
+
+#### 4. XorDev Shaders
+* **Author:** @XorDev (https://x.com/XorDev)
+* **Ported to niri by:** liixini
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `heavenly`, `ionize`, `nebula1`, `starfield` (procedural visual algorithms).
+
+#### 5. Star Nest
+* **Author:** Pablo Roman Andrioli (Kali)
+* **License:** MIT License
+* **Ported to niri by:** liixini
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `astral`
+
+#### 6. Matrix Digital Rain
+* **Ported to niri by:** liixini
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `matrix` (procedural digital rain effect).
