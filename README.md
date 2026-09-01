@@ -1,6 +1,6 @@
 
 
-# HyprWindowShade — Animation Shaders Setup & Tuning Guide
+# HyprWindowShade Shader collection Setup & Tuning Guide
 
 Supplementary guide for integrating and tuning open and close shader animations in
 Hyprland. 
