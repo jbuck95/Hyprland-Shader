@@ -9,8 +9,6 @@ Official plugin documentation: [ManofJELLO/HyprWindowShade](https://github.com/M
 Most of the Shaders are from [liixini](https://github.com/liixini/shaders)
 
 
-![DEMO:](https://github.com/user-attachments/assets/954fd063-01a7-4192-a307-4fcf95e56ac4)
-
 https://github.com/user-attachments/assets/809aaa16-e1ff-4237-aca4-2210e1138c60
 
 ---
