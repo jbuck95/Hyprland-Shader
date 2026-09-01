@@ -1,16 +1,17 @@
 # HyprWindowShade — Animation Shaders Setup & Tuning Guide
 
 Supplementary guide for integrating and tuning open and close shader animations in
-Hyprland. Focuses on Hyprland-specific configuration, compositor animation
-interactions, geometry fixes, and shader alpha masking.
+Hyprland. 
 
 Official plugin documentation: [ManofJELLO/HyprWindowShade](https://github.com/ManofJELLO/HyprWindowShade)
 Most of the Shaders are from [liixini](https://github.com/liixini/shaders)
 
 
+![DEMO:](https://github.com/user-attachments/assets/5b58add1-a25d-4e13-9654-399a348b6dfb)
+
 ---
 
-## 1. Hyprland Animation Tuning 
+## 1. Hyprland Animation Settings
 
 To prevent Hyprland's internal compositor animations from interfering with
 HyprWindowShade's snapshot close shaders, configure the animation leaves in
