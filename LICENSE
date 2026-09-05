@@ -64,3 +64,86 @@ This repository includes, adapts, and builds upon shaders and transitions from t
 * **Ported to niri by:** liixini
 * **Adapted for Hyprland/Wayland by:** Jan H.
 * **Used in:** `matrix` (procedural digital rain effect).
+
+#### 7. crumpledWave
+* **Author:** nasana (Created: 2020-01-29)
+* **Social / Profile:** https://twitter.com/nasana_x
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `crumpledwave`
+
+#### 8. Warp Speed 2
+* **Author:** David Hoskins (2015)
+* **Source:** https://www.shadertoy.com/view/Msl3WH
+* **License:** Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `warpspeed2` / `warpspeed`
+
+#### 9. Clearly a bug (Happy Accident)
+* **Source / Platform:** Twigl (https://twigl.app?ol=true&ss=-OUOudmBPJ57CIb7rAxS)
+* **License:** CC0
+* **Attribution / Techniques:** @XorDev, @byt3_m3chanic, @FabriceNeyrat2, @iq, @shane
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `clearlyabug`
+
+#### 10. EmberCircles
+* **Technique:** Simplex 3D Noise Palette Dot Matrix (credits: https://www.shadertoy.com/view/XsX3zB)
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `embercircles`
+
+#### 11. Electric Wave (CineShader)
+* **Author:** nasana (Created: 2020-01-30)
+* **Social / Profile:** https://twitter.com/nasana_x
+* **Tags:** cineshader
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `electricwave`
+
+#### 12. Synapse (parametric)
+* **Author:** anAccount (Created: 2026-09-04)
+* **Tags:** raymarching, gyroid, parametric
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `synapse` / `synapseparametric`
+
+#### 13. molten bismuth
+* **Author:** florian berger (flockaroo) - 2019
+* **Source:** https://www.shadertoy.com/view/MsGSRd / Shadertoy
+* **License:** Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `moltenbismuth`
+
+#### 14. Spilled (Single Pass CFD)
+* **Author:** florian berger (flockaroo) - 2016
+* **Source:** https://www.shadertoy.com/view/MsGSRd
+* **License:** Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `spilled` / `cfdfluid`
+
+#### 15. Molten Glass
+* **Author:** mherreshoff (Created: 2020-12-19)
+* **Tags:** glass, morphing, melting, molten
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `moltenglass`
+
+#### 16. VCR Distortion (VHS)
+* **License:** Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `vhs` / `vcrdistort`
+
+#### 17. ascii terminal
+* **Author:** ryk (Created: 2015-03-14)
+* **Tags:** 2d, crt, pixels
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `asciiterminal`
+
+#### 18. Bitmap to ASCII
+* **Author:** movAX13h (2013-2023)
+* **Source:** https://www.shadertoy.com/view/lssGDj
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `bitmapascii`
+
+#### 19. Liquid DOS
+* **Author:** studiobloom (Created: 2023-10-12)
+* **Source:** https://www.shadertoy.com/view/dtffRN
+* **Tags:** retro, distortion, crt, glitch, analog
+* **Adapted for Hyprland/Wayland by:** Jan H.
+* **Used in:** `liquiddos`
+

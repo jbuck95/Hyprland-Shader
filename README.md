@@ -185,58 +185,72 @@ All shaders adhere to these requirements:
 
 ---
 
-## 5. Included Shader Sets (42 Pairs)
+## 5. Included Shader Sets (55 Pairs)
 
 Each set in [`shaders/`](file:///home/jan/own/shader/shaders/) provides paired `_open.glsl` and `_close.glsl` animation variants:
 
 
 | # | Shader | Variants | Type / Description |
 |---|---|---|---|
-| 1 | **astral** | `_open` / `_close` | Star Nest volumetric raymarching (cosmic deep space) |
-| 2 | **bounce** | `_open` / `_close` | Elastic bounce transition |
-| 3 | **circle** | `_open` / `_close` | Circular iris reveal / wipe |
-| 4 | **colour-distance** | `_open` / `_close` | Color distance threshold wipe |
-| 5 | **crazy-parametric** | `_open` / `_close` | Parametric wave and curve distortion |
-| 6 | **crosshatch** | `_open` / `_close` | Crosshatch shading pattern wipe |
-| 7 | **crosswarp** | `_open` / `_close` | Diagonal cross-warp distortion |
-| 8 | **directional** | `_open` / `_close` | Linear directional slide / wipe |
-| 9 | **directional-wipe** | `_open` / `_close` | Smooth directional gradient wipe |
-| 10 | **dissolve** | `_open` / `_close` | Organic particulate noise dissolve |
-| 11 | **fade** | `_open` / `_close` | Standard linear alpha fadeout |
-| 12 | **fadecolor** | `_open` / `_close` | Color tint transition fade |
-| 13 | **fire** | `_open` / `_close` | Procedural flame burning & heat distortion |
-| 14 | **flyeye** | `_open` / `_close` | Compound lens / fly-eye facet distortion |
-| 15 | **glass-warp** | `_open` / `_close` | Refractive glass warp distortion |
-| 16 | **glitch** | `_open` / `_close` | Digital chromatic glitch & scanline displacement |
-| 17 | **heat-melt** | `_open` / `_close` | Thermal wave shimmer & melting effect |
-| 18 | **heavenly** | `_open` / `_close` | Ethereal celestial volumetric light (XorDev) |
-| 19 | **ink-splash** | `_open` / `_close` | Expanding organic ink splatter |
-| 20 | **inkwell-drop** | `_open` / `_close` | Concentric fluid ink drops |
-| 21 | **ionize** | `_open` / `_close` | Ionization electric discharge field (XorDev) |
-| 22 | **matrix** | `_open` / `_close` | Digital green matrix code rain |
-| 23 | **morph** | `_open` / `_close` | Fluid morphing transition |
-| 24 | **nebula1** | `_open` / `_close` | Volumetric deep space nebula (XorDev) |
-| 25 | **overexposure** | `_open` / `_close` | High-exposure flash overexposure |
-| 26 | **perlin** | `_open` / `_close` | Perlin noise combustion & burn away |
-| 27 | **pixelate** | `_open` / `_close` | Dynamic pixelation mosaic |
-| 28 | **pixelfade-wave** | `_open` / `_close` | Pixelated wave dissolution |
-| 29 | **plasma** | `_open` / `_close` | Classic retro plasma field |
-| 30 | **plasma-flow** | `_open` / `_close` | Flowing liquid chromatic plasma |
-| 31 | **polar-function** | `_open` / `_close` | Polar coordinate spiral rotation |
-| 32 | **polka-dots-curtain** | `_open` / `_close` | Expanding halftone polka-dot curtain |
-| 33 | **randomsquares** | `_open` / `_close` | Randomized square tile dissolve |
-| 34 | **ripple** | `_open` / `_close` | Concentric water ripple displacement |
-| 35 | **smoke** | `_open` / `_close` | Rising dense particulate smoke |
-| 36 | **snap** | `_open` / `_close` | Disintegration ash / snap dissolve |
-| 37 | **soft-warp-fade** | `_open` / `_close` | Smooth warp with progressive fade |
-| 38 | **starfield** | `_open` / `_close` | Procedural starfield particle drift (XorDev) |
-| 39 | **static-fade** | `_open` / `_close` | Analog TV static noise fade |
-| 40 | **voronoi-shatter** | `_open` / `_close` | Voronoi crystalline glass shatter |
-| 41 | **wave-warp** | `_open` / `_close` | Sine wave displacement warp |
-| 42 | **wobbl** | `_open` / `_close` | Elastic jello wobble oscillation |
+| 1 | **asciiterminal** | `_open` / `_close` | Green phosphor ASCII terminal matrix & CRT bloom (ryk) |
+| 2 | **astral** | `_open` / `_close` | Star Nest volumetric raymarching (cosmic deep space) |
+| 3 | **bitmapascii** | `_open` / `_close` | Bitmapped 5x5 ASCII character matrix resolution (movAX13h) |
+| 4 | **bounce** | `_open` / `_close` | Elastic bounce transition |
+| 5 | **circle** | `_open` / `_close` | Circular iris reveal / wipe |
+| 6 | **clearlyabug** | `_open` / `_close` | 'Clearly a bug' raymarching fractal box structure (XorDev / community) |
+| 7 | **colour-distance** | `_open` / `_close` | Color distance threshold wipe |
+| 8 | **crazy-parametric** | `_open` / `_close` | Parametric wave and curve distortion |
+| 9 | **crosshatch** | `_open` / `_close` | Crosshatch shading pattern wipe |
+| 10 | **crosswarp** | `_open` / `_close` | Diagonal cross-warp distortion |
+| 11 | **crumpledwave** | `_open` / `_close` | Harmonic sine wave silk interference (nasana) |
+| 12 | **directional** | `_open` / `_close` | Linear directional slide / wipe |
+| 13 | **directional-wipe** | `_open` / `_close` | Smooth directional gradient wipe |
+| 14 | **dissolve** | `_open` / `_close` | Organic particulate noise dissolve |
+| 15 | **electricwave** | `_open` / `_close` | Glowing electric plasma wave caustics (nasana) |
+| 16 | **embercircles** | `_open` / `_close` | Simplex 3D noise LED pegboard dot matrix |
+| 17 | **fade** | `_open` / `_close` | Standard linear alpha fadeout |
+| 18 | **fadecolor** | `_open` / `_close` | Color tint transition fade |
+| 19 | **fire** | `_open` / `_close` | Procedural flame burning & heat distortion |
+| 20 | **flyeye** | `_open` / `_close` | Compound lens / fly-eye facet distortion |
+| 21 | **glass-warp** | `_open` / `_close` | Refractive glass warp distortion |
+| 22 | **glitch** | `_open` / `_close` | Digital chromatic glitch & scanline displacement |
+| 23 | **heat-melt** | `_open` / `_close` | Thermal wave shimmer & melting effect |
+| 24 | **heavenly** | `_open` / `_close` | Ethereal celestial volumetric light (XorDev) |
+| 25 | **ink-splash** | `_open` / `_close` | Expanding organic ink splatter |
+| 26 | **inkwell-drop** | `_open` / `_close` | Concentric fluid ink drops |
+| 27 | **ionize** | `_open` / `_close` | Ionization electric discharge field (XorDev) |
+| 28 | **liquiddos** | `_open` / `_close` | Analog liquid CRT / DOS digit matrix & phosphor scanlines (studiobloom) |
+| 29 | **matrix** | `_open` / `_close` | Digital green matrix code rain |
+| 30 | **moltenbismuth** | `_open` / `_close` | Iridescent molten bismuth fluid metal (flockaroo) |
+| 31 | **moltenglass** | `_open` / `_close` | Iterated molten glass refraction & dispersion (mherreshoff) |
+| 32 | **morph** | `_open` / `_close` | Fluid morphing transition |
+| 33 | **nebula1** | `_open` / `_close` | Volumetric deep space nebula (XorDev) |
+| 34 | **overexposure** | `_open` / `_close` | High-exposure flash overexposure |
+| 35 | **perlin** | `_open` / `_close` | Perlin noise combustion & burn away |
+| 36 | **pixelate** | `_open` / `_close` | Dynamic pixelation mosaic |
+| 37 | **pixelfade-wave** | `_open` / `_close` | Pixelated wave dissolution |
+| 38 | **plasma** | `_open` / `_close` | Classic retro plasma field |
+| 39 | **plasma-flow** | `_open` / `_close` | Flowing liquid chromatic plasma |
+| 40 | **polar-function** | `_open` / `_close` | Polar coordinate spiral rotation |
+| 41 | **polka-dots-curtain** | `_open` / `_close` | Expanding halftone polka-dot curtain |
+| 42 | **randomsquares** | `_open` / `_close` | Randomized square tile dissolve |
+| 43 | **ripple** | `_open` / `_close` | Concentric water ripple displacement |
+| 44 | **smoke** | `_open` / `_close` | Rising dense particulate smoke |
+| 45 | **snap** | `_open` / `_close` | Disintegration ash / snap dissolve |
+| 46 | **soft-warp-fade** | `_open` / `_close` | Smooth warp with progressive fade |
+| 47 | **spilled** | `_open` / `_close` | Computational fluid dynamics vortex advection (flockaroo) |
+| 48 | **starfield** | `_open` / `_close` | Procedural starfield particle drift (XorDev) |
+| 49 | **static-fade** | `_open` / `_close` | Analog TV static noise fade |
+| 50 | **synapse** | `_open` / `_close` | Volumetric gyroid neural glow (anAccount) |
+| 51 | **vhs** | `_open` / `_close` | Analog CRT screen distortion & VHS tape tracking glitch |
+| 52 | **voronoi-shatter** | `_open` / `_close` | Voronoi crystalline glass shatter |
+| 53 | **warpspeed2** | `_open` / `_close` | Warp Speed 2 hyperdrive tunnel (David Hoskins) |
+| 54 | **wave-warp** | `_open` / `_close` | Sine wave displacement warp |
+| 55 | **wobbl** | `_open` / `_close` | Elastic jello wobble oscillation |
 
 ---
 
 ## 6. License & Credits
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details and complete third-party attributions.
+
