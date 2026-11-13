@@ -1,13 +1,11 @@
 -- HyprWindowShade — central configuration
--- WindowRules.lua (open/close/move/resize/focus/workspace animations)
--- read from here via require("HyprWindowShade").
+-- WindowRules.lua (open/close animations) reads from here via require("HyprWindowShade").
 
 local home      = os.getenv("HOME")
 local shaderDir = home .. "/.config/hypr/shaders"
 
 local M = {}
 
--- Helper to resolve shader file path (checks subfolder first, falls back to root)
 local function resolve_path(category, base)
     return shaderDir .. "/" .. category .. "/" .. base .. "_" .. category .. ".glsl"
 end
@@ -33,39 +31,6 @@ M.default_close_animation = {
     duration = 1.0,
 }
 
--- ── Move & Drag animations ──
-M.move_animations = {
-    -- Beispiel: { name = "move-kitty", class = "^(kitty)$", shader = "smoke", settle = 0.4 },
-}
-M.default_move_animation = {
-    shader = "smoke",
-    settle = 0.4,
-}
-
--- ── Resize animations ──
-M.resize_animations = {
-    -- Beispiel: { name = "resize-kitty", class = "^(kitty)$", shader = "smoke", settle = 0.35 },
-}
-M.default_resize_animation = {
-    shader = "smoke",
-    settle = 0.35,
-}
-
--- ── Focus pulse animations ──
-M.focus_animations = {
-    -- Beispiel: { name = "focus-kitty", class = "^(kitty)$", shader = "smoke", duration = 0.45 },
-}
-M.default_focus_animation = {
-    shader   = "smoke",
-    duration = 0.45,
-}
-
--- ── Workspace switch animations ──
-M.workspace_animations = {
-    -- Beispiel: { name = "ws-kitty", class = "^(kitty)$", shader = "smoke", settle = 0.35 },
-}
-M.default_workspace_animation = nil
-
 -- ── Helpers: build the tag / path strings ──
 function M.open_anim_tag(entry)
     local base = entry.shader:gsub("%.glsl$", ""):gsub("_open$", "")
@@ -85,62 +50,6 @@ function M.default_close_anim_tag(entry)
     local base = entry.shader:gsub("%.glsl$", ""):gsub("_close$", "")
     local tag = "+shader_close_default:" .. resolve_path("close", base)
     if entry.duration then tag = tag .. "@" .. entry.duration end
-    return tag
-end
-
-function M.move_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_move$", "")
-    local tag = "+shader_move:" .. resolve_path("move", base)
-    if entry.settle then tag = tag .. "@" .. entry.settle end
-    return tag
-end
-
-function M.default_move_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_move$", "")
-    local tag = "+shader_move_default:" .. resolve_path("move", base)
-    if entry.settle then tag = tag .. "@" .. entry.settle end
-    return tag
-end
-
-function M.resize_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_resize$", "")
-    local tag = "+shader_resize:" .. resolve_path("resize", base)
-    if entry.settle then tag = tag .. "@" .. entry.settle end
-    return tag
-end
-
-function M.default_resize_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_resize$", "")
-    local tag = "+shader_resize_default:" .. resolve_path("resize", base)
-    if entry.settle then tag = tag .. "@" .. entry.settle end
-    return tag
-end
-
-function M.focus_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_focus$", "")
-    local tag = "+shader_focus:" .. resolve_path("focus", base)
-    if entry.duration then tag = tag .. "@" .. entry.duration end
-    return tag
-end
-
-function M.default_focus_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_focus$", "")
-    local tag = "+shader_focus_default:" .. resolve_path("focus", base)
-    if entry.duration then tag = tag .. "@" .. entry.duration end
-    return tag
-end
-
-function M.workspace_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_workspace$", "")
-    local tag = "+shader_workspace:" .. resolve_path("workspace", base)
-    if entry.settle then tag = tag .. "@" .. entry.settle end
-    return tag
-end
-
-function M.default_workspace_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_workspace$", "")
-    local tag = "+shader_workspace_default:" .. resolve_path("workspace", base)
-    if entry.settle then tag = tag .. "@" .. entry.settle end
     return tag
 end
 

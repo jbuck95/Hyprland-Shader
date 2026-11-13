@@ -1,7 +1,6 @@
 # HyprWindowShade Shader Collection
 
-60 window-animation effects for [HyprWindowShade](https://github.com/ManofJELLO/HyprWindowShade),
-each built out in six kinds — `open`, `close`, `move`, `resize`, `focus`, `workspace` —
+60 open/close animation effects for [HyprWindowShade](https://github.com/ManofJELLO/HyprWindowShade),
 plus the Lua config that wires them into Hyprland.
 
 **How the plugin works — install, tags, stacking, uniforms, writing shaders — is documented
@@ -17,22 +16,14 @@ https://github.com/user-attachments/assets/809aaa16-e1ff-4237-aca4-2210e1138c60
 
 ```
 shaders/
-├── open/       <name>_open.glsl       62 files — plays once when a window opens
-├── close/      <name>_close.glsl      62 files — plays once as it closes
-├── move/       <name>_move.glsl       62 files — while the window is being moved
-├── resize/     <name>_resize.glsl     62 files — while it is being resized
-├── focus/      <name>_focus.glsl      62 files — pulse when it gains focus
-└── workspace/  <name>_workspace.glsl  62 files — while its workspace slides
+├── open/    <name>_open.glsl    62 files — plays once when a window opens
+└── close/   <name>_close.glsl   62 files — plays once as it closes
 ```
 
-372 shaders from 60 effects. The names are the same across all six directories, so a shader
-you like in one kind has an equivalent in the others.
+60 effects as pairs: every name in `open/` has its counterpart in `close/`.
 
 Copy `shaders/` to `~/.config/hypr/shaders/` (or anywhere stable — then set `shaderDir` in
 `HyprWindowShade.lua`). Window-rule paths must be absolute; `~` is not expanded.
-
-`scripts/generate_variants.py` derives the `move`, `resize`, `focus` and `workspace`
-variants from the `open` shaders. You only need it if you add a new effect.
 
 ---
 
@@ -59,9 +50,8 @@ suffix cannot drift apart:
 In the table you write just `shader = "smoke"`. A trailing `_close` or `.glsl` is stripped,
 so both spellings work.
 
-**Duration vs. settle.** `open`, `close` and `focus` are one-shots: `duration` overrides the
-shader's own length. `move`, `resize` and `workspace` have no duration — Hyprland's motion is
-the clock — so their `settle` field is just the tail that keeps playing afterwards.
+**Duration.** Both open and close are one-shots: `duration` overrides the shader's own
+length, and is capped at 5 s.
 
 ### Catch-all rules need `_default`
 
@@ -93,8 +83,8 @@ use them for every `M.default_*` entry.
 The plugin's README has the full rules. What this collection adds on top, and what a new
 effect must do to fit in:
 
-1. **`#version 320 es` on line 1**, `// @duration` on line 2 for `close`/`focus`,
-   `// @settle` for `move`/`resize`/`workspace`.
+1. **`#version 320 es` on line 1**, `// @duration` on line 2 — otherwise the plugin falls
+   back to 0.3 s.
 2. **Close shaders must reach alpha 0** when `progress` hits 1.0 — the plugin pins the
    snapshot's alpha and your shader owns the disappearance. If your effect only tints or
    wipes, add `// @overlay` and let Hyprland's fade do it.
@@ -122,7 +112,7 @@ effect must do to fit in:
 - **No shader uses `window_rect`.** Four effects (`circle`, `crosshatch`, `heat-melt`,
   `polka-dots-curtain`) are positional and will play from the monitor's centre on close.
 - **Case-duplicate sets.** `crumpledWave`/`crumpledwave` and `EmberCircles`/`embercircles`
-  exist in every directory. On a case-insensitive filesystem (macOS, Windows) one of each
+  exist in both directories. On a case-insensitive filesystem (macOS, Windows) one of each
   pair silently overwrites the other. *Fix: drop the camel-case copies.*
 
 ---
