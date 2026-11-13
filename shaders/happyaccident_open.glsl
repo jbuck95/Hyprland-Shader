@@ -1,1 +1,0 @@
-clearlyabug_open.glsl

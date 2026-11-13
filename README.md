@@ -1,256 +1,233 @@
+# HyprWindowShade Shader Collection
 
+60 window-animation effects for [HyprWindowShade](https://github.com/ManofJELLO/HyprWindowShade),
+each built out in six kinds — `open`, `close`, `move`, `resize`, `focus`, `workspace` —
+plus the Lua config that wires them into Hyprland.
 
-# HyprWindowShade Shader collection (open/close)
-
-Supplementary guide for integrating and tuning open and close shader animations in
-Hyprland. 
-
-Official plugin documentation: [ManofJELLO/HyprWindowShade](https://github.com/ManofJELLO/HyprWindowShade)
-Most of the Shaders are from [liixini](https://github.com/liixini/shaders)
-
+**How the plugin works — install, tags, stacking, uniforms, writing shaders — is documented
+in the [plugin's README](https://github.com/ManofJELLO/HyprWindowShade#readme).** This page
+only covers what lives in *this* repo: which shader goes where, and the config that binds
+them. I won't duplicate the plugin docs here; they change and I'd fall out of date again.
 
 https://github.com/user-attachments/assets/809aaa16-e1ff-4237-aca4-2210e1138c60
 
 ---
 
-## 1. Hyprland Animation Settings
+## Layout
 
-To prevent Hyprland's internal compositor animations from interfering with
-HyprWindowShade's snapshot close shaders, configure the animation leaves in
-`Settings.lua`:
-
-```lua
--- 1. Geometry: popin 100% keeps window size fixed (prevents shrinking toward center or sliding off-screen during close)
-hl.animation({ leaf = "windowsOut", enabled = anim_enabled, speed = 15, bezier = "linear", style = "popin 100%" })
-
--- 2. Fadeout duration: Must match or exceed the longest shader duration (speed is in deciseconds: 10 = 1.0s, 15 = 1.5s)
-hl.animation({ leaf = "fade",    enabled = anim_enabled, speed = 15, bezier = "linear" })
-hl.animation({ leaf = "fadeOut", enabled = anim_enabled, speed = 15, bezier = "linear" })
+```
+shaders/
+├── open/       <name>_open.glsl       62 files — plays once when a window opens
+├── close/      <name>_close.glsl      62 files — plays once as it closes
+├── move/       <name>_move.glsl       62 files — while the window is being moved
+├── resize/     <name>_resize.glsl     62 files — while it is being resized
+├── focus/      <name>_focus.glsl      62 files — pulse when it gains focus
+└── workspace/  <name>_workspace.glsl  62 files — while its workspace slides
 ```
 
-> **Why this matters:** If `fadeOut` is left at default values (e.g. `speed = 1` = 100
-> ms), Hyprland forces the snapshot opacity to 0 after 0.1 s, cutting off longer
-> close animations mid-flight.
+372 shaders from 60 effects. The names are the same across all six directories, so a shader
+you like in one kind has an equivalent in the others.
+
+Copy `shaders/` to `~/.config/hypr/shaders/` (or anywhere stable — then set `shaderDir` in
+`HyprWindowShade.lua`). Window-rule paths must be absolute; `~` is not expanded.
+
+`scripts/generate_variants.py` derives the `move`, `resize`, `focus` and `workspace`
+variants from the `open` shaders. You only need it if you add a new effect.
 
 ---
 
-## 2. HyprWindowShade.lua
+## Config
 
-Manages all open and close shader bindings in one central table. Shaders can be
-referenced by base name without `_open`/`_close` or `.glsl`:
+Only `HyprWindowShade.lua` ships here — the other two are part of my Hyprland config, so
+adapt them to your own file layout:
+
+| File | Role | In repo |
+|---|---|---|
+| `HyprWindowShade.lua` | Which shader plays for which app class, and how long. | yes |
+| `WindowRules.lua` | Turns that table into `hl.window_rule()` calls. | no |
+| `Keybinds.lua` *(optional)* | Runtime toggles. | no |
+
+The helpers in `HyprWindowShade.lua` build the tag strings, so paths and the `_<kind>`
+suffix cannot drift apart:
+
+```
++shader_close:/home/jan/.config/hypr/shaders/close/smoke_close.glsl@1.0
+└────┬─────┘ └──────────────────────────┬──────────────────────────┘└┬┘
+  tag kind                            path                     duration
+```
+
+In the table you write just `shader = "smoke"`. A trailing `_close` or `.glsl` is stripped,
+so both spellings work.
+
+**Duration vs. settle.** `open`, `close` and `focus` are one-shots: `duration` overrides the
+shader's own length. `move`, `resize` and `workspace` have no duration — Hyprland's motion is
+the clock — so their `settle` field is just the tail that keeps playing afterwards.
+
+### Catch-all rules need `_default`
+
+Hyprland keeps window tags in an alphabetically sorted set, so two rules setting the *same*
+tag resolve by whichever **path** sorts later — not by which rule is more specific. A
+catch-all `+shader_close:` therefore fights your per-app closes, and renaming a file can flip
+the winner.
+
+Append `_default` to fix it. A fallback applies only when the same tag without the suffix is
+absent:
 
 ```lua
--- HyprWindowShade — central configuration
--- WindowRules.lua (open animations) and Keybinds.lua (close animation)
--- read from here via require("HyprWindowShade").
+-- every window closes with smoke…
+hl.window_rule({ match = { class = ".*" },
+                 tag = "+shader_close_default:/path/close/smoke_close.glsl@1.0" })
 
-local home      = os.getenv("HOME")
-local shaderDir = home .. "/.config/hypr/shaders" -- change this accordingly!
-
-local M = {}
-
---  Open animations (per-app class)
-M.open_animations = {
-    { name = "open-browsers", class = "^(firefox|zen|chromium)$", shader = "nebula1", duration = 0.5 },
-    { name = "open-kitty",    class = "^(kitty)$",                shader = "astral",  duration = 0.8 },
-    { name = "open-thunar",   class = "^(thunar)$",               shader = "perlin",  duration = 0.8 },
-}
-
--- Optional: specific close animations per app class 
--- Wenn für eine App hier nichts definiert ist, greift automatisch default_close_animation.
-M.close_animations = {
-    { name = "close-kitty",    class = "^(kitty)$",                shader = "smoke",  duration = 0.8 },
-    { name = "close-browsers", class = "^(firefox|zen|chromium)$", shader = "fire",   duration = 1.0 },
-    { name = "close-thunar",   class = "^(thunar)$",               shader = "perlin", duration = 1.0 },
-}
-
---  Global default close animation (gilt für alle Apps ohne eigene Regel) 
-M.default_close_animation = {
-    shader   = "smoke",
-    duration = 1.0,
-}
-
--- ── Helpers: build the tag / path strings ──
-function M.open_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_open$", "")
-    local tag = "+shader_open:" .. shaderDir .. "/" .. base .. "_open.glsl"
-    if entry.duration then tag = tag .. "@" .. entry.duration end
-    return tag
-end
-
-function M.close_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_close$", "")
-    local tag = "+shader_close:" .. shaderDir .. "/" .. base .. "_close.glsl"
-    if entry.duration then tag = tag .. "@" .. entry.duration end
-    return tag
-end
-
-function M.default_close_anim_tag(entry)
-    local base = entry.shader:gsub("%.glsl$", ""):gsub("_close$", "")
-    local tag = "+shader_close_default:" .. shaderDir .. "/" .. base .. "_close.glsl"
-    if entry.duration then tag = tag .. "@" .. entry.duration end
-    return tag
-end
-
-return M
+-- …except kitty
+hl.window_rule({ match = { class = "^(kitty)$" },
+                 tag = "+shader_close:/path/close/matrix_close.glsl@0.8" })
 ```
+
+`HyprWindowShade.lua` ships helpers for exactly this (`default_close_anim_tag`, etc.) —
+use them for every `M.default_*` entry.
 
 ---
 
-## 3. Window Rules & Keybind Integration
+## Writing a new shader
 
-### Windowrules.lua
+The plugin's README has the full rules. What this collection adds on top, and what a new
+effect must do to fit in:
 
-Generates `+shader_open:`, `+shader_close:`, and `+shader_close_default:` tags from
-the configuration table:
-
-```lua
-local shade = require("HyprWindowShade")
-
---  HyprWindowShade: Open- & Close-Animationen 
--- Einstellungen (Klassen, Shader, Dauer) in HyprWindowShade.lua
-for _, anim in ipairs(shade.open_animations or {}) do
-    hl.window_rule({
-        name = anim.name,
-        match = { class = anim.class },
-        tag = shade.open_anim_tag(anim),
-    })
-end
-
---  HyprWindowShade: Close-Animationen (Spezifische Apps) 
-if shade.close_animations then
-    for _, anim in ipairs(shade.close_animations) do
-        hl.window_rule({
-            name = anim.name or "close-anim",
-            match = { class = anim.class },
-            tag = shade.close_anim_tag(anim),
-        })
-    end
-end
-
---  HyprWindowShade: global fallback 
-local default_close = shade.default_close_animation or shade.close_animation
-if default_close then
-    hl.window_rule({
-        name = "close-anim-default",
-        match = { class = ".*" },
-        tag = shade.default_close_anim_tag(default_close),
-    })
-end
-```
-
----
-
-## 4. Shader Development 
-
-All shaders adhere to these requirements:
-
-1. **Premultiplied Alpha Masking:** Hyprland uses Premultiplied Alpha
-   (`GL_ONE, GL_ONE_MINUS_SRC_ALPHA`). Any non-zero RGB value outputs additive light onto
-   the monitor even if alpha is `0`.
-   * **Wrong:** `fragColor = vec4(final_rgb, screen.a) * remain * tail;` *(glows across
-     entire screen)*
-   * **Correct:**
-     ```glsl
-     float mask = screen.a * remain * tail;
-     fragColor = vec4(final_rgb * mask, mask);
-     ```
-
-2. **Resolution Fallback during Close Fadeouts:** When closing, the live window view
-   is destroyed and the plugin provides `surface_size = vec2(0, 0)`. Geometry
-   calculations must use `resolution` as fallback:
+1. **`#version 320 es` on line 1**, `// @duration` on line 2 for `close`/`focus`,
+   `// @settle` for `move`/`resize`/`workspace`.
+2. **Close shaders must reach alpha 0** when `progress` hits 1.0 — the plugin pins the
+   snapshot's alpha and your shader owns the disappearance. If your effect only tints or
+   wipes, add `// @overlay` and let Hyprland's fade do it.
+3. **Premultiply.** `fragColor = vec4(rgb * mask, mask)`, never `vec4(rgb, alpha)` with
+   unscaled colour — otherwise a pale rectangle shows through popups and shadows.
+4. **Fall back when `surface_size` is degenerate** — don't divide by it unchecked:
    ```glsl
-   uniform vec2 surface_size;
-   uniform vec2 resolution;
-
-   vec2 res = surface_size.x > 1.0 ? surface_size : (resolution.x > 1.0 ? resolution : vec2(1920.0, 1080.0));
+   vec2 res = surface_size.x > 1.0 ? surface_size
+            : (resolution.x > 1.0 ? resolution : vec2(1920.0, 1080.0));
    ```
-
-3. **Smooth Dissolve Progress Curve:** In dissolve/particle shaders, avoid
-   multiplying `p` (progress 0.0 → 1.0) by large factors that make the effect finish
-   too early:
+5. **Positional effects need `window_rect`.** During a close, `v_texcoord` spans a
+   monitor-sized snapshot, not the window — a radial wipe keys off the *monitor's* centre.
    ```glsl
-   float dissolve = (1.0 - dist) * 0.9 + energy * 0.4;
-   float remain = smoothstep(dissolve + 0.3, dissolve - 0.3, p * 1.35);
-   float tail = smoothstep(1.0, 0.85, p);
-   ```
-
-4. **Directive Order:** `#version 320 es` must strictly be on **line 1** (GLSL ES
-   specification). Upstream `@duration` comment directive follows on **line 2**:
-   ```glsl
-   #version 320 es
-   // @duration 0.5
-   precision highp float;
+   vec2 local = (v_texcoord - window_rect.xy) / window_rect.zw;  // 0..1 across the view
    ```
 
 ---
 
-## 5. Included Shader Sets (55 Pairs)
+## Known gaps
 
-Each set in [`shaders/`](file:///home/jan/own/shader/shaders/) provides paired `_open.glsl` and `_close.glsl` animation variants:
-
-
-| # | Shader | Variants | Type / Description |
-|---|---|---|---|
-| 1 | **asciiterminal** | `_open` / `_close` | Green phosphor ASCII terminal matrix & CRT bloom (ryk) |
-| 2 | **astral** | `_open` / `_close` | Star Nest volumetric raymarching (cosmic deep space) |
-| 3 | **bitmapascii** | `_open` / `_close` | Bitmapped 5x5 ASCII character matrix resolution (movAX13h) |
-| 4 | **bounce** | `_open` / `_close` | Elastic bounce transition |
-| 5 | **circle** | `_open` / `_close` | Circular iris reveal / wipe |
-| 6 | **clearlyabug** | `_open` / `_close` | 'Clearly a bug' raymarching fractal box structure (XorDev / community) |
-| 7 | **colour-distance** | `_open` / `_close` | Color distance threshold wipe |
-| 8 | **crazy-parametric** | `_open` / `_close` | Parametric wave and curve distortion |
-| 9 | **crosshatch** | `_open` / `_close` | Crosshatch shading pattern wipe |
-| 10 | **crosswarp** | `_open` / `_close` | Diagonal cross-warp distortion |
-| 11 | **crumpledwave** | `_open` / `_close` | Harmonic sine wave silk interference (nasana) |
-| 12 | **directional** | `_open` / `_close` | Linear directional slide / wipe |
-| 13 | **directional-wipe** | `_open` / `_close` | Smooth directional gradient wipe |
-| 14 | **dissolve** | `_open` / `_close` | Organic particulate noise dissolve |
-| 15 | **electricwave** | `_open` / `_close` | Glowing electric plasma wave caustics (nasana) |
-| 16 | **embercircles** | `_open` / `_close` | Simplex 3D noise LED pegboard dot matrix |
-| 17 | **fade** | `_open` / `_close` | Standard linear alpha fadeout |
-| 18 | **fadecolor** | `_open` / `_close` | Color tint transition fade |
-| 19 | **fire** | `_open` / `_close` | Procedural flame burning & heat distortion |
-| 20 | **flyeye** | `_open` / `_close` | Compound lens / fly-eye facet distortion |
-| 21 | **glass-warp** | `_open` / `_close` | Refractive glass warp distortion |
-| 22 | **glitch** | `_open` / `_close` | Digital chromatic glitch & scanline displacement |
-| 23 | **heat-melt** | `_open` / `_close` | Thermal wave shimmer & melting effect |
-| 24 | **heavenly** | `_open` / `_close` | Ethereal celestial volumetric light (XorDev) |
-| 25 | **ink-splash** | `_open` / `_close` | Expanding organic ink splatter |
-| 26 | **inkwell-drop** | `_open` / `_close` | Concentric fluid ink drops |
-| 27 | **ionize** | `_open` / `_close` | Ionization electric discharge field (XorDev) |
-| 28 | **liquiddos** | `_open` / `_close` | Analog liquid CRT / DOS digit matrix & phosphor scanlines (studiobloom) |
-| 29 | **matrix** | `_open` / `_close` | Digital green matrix code rain |
-| 30 | **moltenbismuth** | `_open` / `_close` | Iridescent molten bismuth fluid metal (flockaroo) |
-| 31 | **moltenglass** | `_open` / `_close` | Iterated molten glass refraction & dispersion (mherreshoff) |
-| 32 | **morph** | `_open` / `_close` | Fluid morphing transition |
-| 33 | **nebula1** | `_open` / `_close` | Volumetric deep space nebula (XorDev) |
-| 34 | **overexposure** | `_open` / `_close` | High-exposure flash overexposure |
-| 35 | **perlin** | `_open` / `_close` | Perlin noise combustion & burn away |
-| 36 | **pixelate** | `_open` / `_close` | Dynamic pixelation mosaic |
-| 37 | **pixelfade-wave** | `_open` / `_close` | Pixelated wave dissolution |
-| 38 | **plasma** | `_open` / `_close` | Classic retro plasma field |
-| 39 | **plasma-flow** | `_open` / `_close` | Flowing liquid chromatic plasma |
-| 40 | **polar-function** | `_open` / `_close` | Polar coordinate spiral rotation |
-| 41 | **polka-dots-curtain** | `_open` / `_close` | Expanding halftone polka-dot curtain |
-| 42 | **randomsquares** | `_open` / `_close` | Randomized square tile dissolve |
-| 43 | **ripple** | `_open` / `_close` | Concentric water ripple displacement |
-| 44 | **smoke** | `_open` / `_close` | Rising dense particulate smoke |
-| 45 | **snap** | `_open` / `_close` | Disintegration ash / snap dissolve |
-| 46 | **soft-warp-fade** | `_open` / `_close` | Smooth warp with progressive fade |
-| 47 | **spilled** | `_open` / `_close` | Computational fluid dynamics vortex advection (flockaroo) |
-| 48 | **starfield** | `_open` / `_close` | Procedural starfield particle drift (XorDev) |
-| 49 | **static-fade** | `_open` / `_close` | Analog TV static noise fade |
-| 50 | **synapse** | `_open` / `_close` | Volumetric gyroid neural glow (anAccount) |
-| 51 | **vhs** | `_open` / `_close` | Analog CRT screen distortion & VHS tape tracking glitch |
-| 52 | **voronoi-shatter** | `_open` / `_close` | Voronoi crystalline glass shatter |
-| 53 | **warpspeed2** | `_open` / `_close` | Warp Speed 2 hyperdrive tunnel (David Hoskins) |
-| 54 | **wave-warp** | `_open` / `_close` | Sine wave displacement warp |
-| 55 | **wobbl** | `_open` / `_close` | Elastic jello wobble oscillation |
+- **`open/` shaders have no `// @duration`.** All 62 declare `progress` but carry no
+  directive, so the plugin uses its 0.3 s default and toasts once per edit. The `duration`
+  field in `HyprWindowShade.lua` masks this for configured apps; a new open animation without
+  one plays for 0.3 s. *Fix: add `// @duration 0.5` under `#version`.*
+- **No shader uses `window_rect`.** Four effects (`circle`, `crosshatch`, `heat-melt`,
+  `polka-dots-curtain`) are positional and will play from the monitor's centre on close.
+- **Case-duplicate sets.** `crumpledWave`/`crumpledwave` and `EmberCircles`/`embercircles`
+  exist in every directory. On a case-insensitive filesystem (macOS, Windows) one of each
+  pair silently overwrites the other. *Fix: drop the camel-case copies.*
 
 ---
 
-## 6. License & Credits
+## Shader sets
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details and complete third-party attributions.
+| Shader | Type |
+|---|---|
+| asciiterminal | Green phosphor ASCII terminal & CRT bloom (ryk) |
+| astral | Star Nest volumetric raymarching (Kali) |
+| bitmapascii | Bitmapped 5×5 ASCII character matrix (movAX13h) |
+| bounce | Elastic bounce transition |
+| cfdfluid | Single-pass fluid dynamics advection (flockaroo) |
+| circle | Circular iris reveal / wipe *(positional)* |
+| clearlyabug | 'Clearly a bug' raymarching fractal (XorDev / community) |
+| colour-distance | Color distance threshold wipe |
+| crazy-parametric | Parametric wave and curve distortion |
+| crosshatch | Crosshatch shading pattern wipe *(positional)* |
+| crosswarp | Diagonal cross-warp distortion |
+| crumpledwave | Harmonic sine wave silk interference (nasana) |
+| directional | Linear directional slide / wipe |
+| directional-wipe | Smooth directional gradient wipe |
+| dissolve | Organic particulate noise dissolve |
+| electricwave | Glowing electric plasma wave caustics (nasana) |
+| embercircles | Simplex 3D noise LED pegboard dot matrix |
+| fade | Standard linear alpha fadeout |
+| fadecolor | Color tint transition fade |
+| fire | Procedural flame burning & heat distortion |
+| flyeye | Compound lens / fly-eye facet distortion |
+| glass-warp | Refractive glass warp distortion |
+| glitch | Digital chromatic glitch & scanline displacement |
+| happyaccident | Twigl 'happy accident' fragment (CC0) |
+| heat-melt | Thermal wave shimmer & melting effect *(positional)* |
+| heavenly | Ethereal celestial volumetric light (XorDev) |
+| ink-splash | Expanding organic ink splatter |
+| inkwell-drop | Concentric fluid ink drops |
+| ionize | Ionization electric discharge field (XorDev) |
+| liquiddos | Analog liquid CRT / DOS digit matrix (studiobloom) |
+| matrix | Digital green matrix code rain |
+| moltenbismuth | Iridescent molten bismuth fluid metal (flockaroo) |
+| moltenglass | Iterated molten glass refraction & dispersion (mherreshoff) |
+| morph | Fluid morphing transition |
+| nebula1 | Volumetric deep space nebula (XorDev) |
+| overexposure | High-exposure flash overexposure |
+| perlin | Perlin noise combustion & burn away |
+| pixelate | Dynamic pixelation mosaic |
+| pixelfade-wave | Pixelated wave dissolution |
+| plasma | Classic retro plasma field |
+| plasma-flow | Flowing liquid chromatic plasma |
+| polar-function | Polar coordinate spiral rotation |
+| polka-dots-curtain | Expanding halftone polka-dot curtain *(positional)* |
+| randomsquares | Randomized square tile dissolve |
+| ripple | Concentric water ripple displacement |
+| smoke | Rising dense particulate smoke |
+| snap | Disintegration ash / snap dissolve |
+| soft-warp-fade | Smooth warp with progressive fade |
+| spilled | CFD vortex advection (flockaroo) |
+| starfield | Procedural starfield particle drift (XorDev) |
+| static-fade | Analog TV static noise fade |
+| synapse | Volumetric gyroid neural glow (anAccount) |
+| synapseparametric | Parametric variant of synapse (anAccount) |
+| vcrdistort | VCR tape distortion / tracking glitch |
+| vhs | Analog CRT distortion & VHS tape tracking glitch |
+| voronoi-shatter | Voronoi crystalline glass shatter |
+| warpspeed | Warp-speed tunnel (David Hoskins) |
+| warpspeed2 | Warp Speed 2 hyperdrive tunnel (David Hoskins) |
+| wave-warp | Sine wave displacement warp |
+| wobbl | Elastic jello wobble oscillation |
 
+For a jelly wobble of the *geometry* rather than the image, use Hyprland's own
+`decoration:wobble` (0.57+) instead — it can deform past the window box, which a fragment
+shader never can.
+
+---
+
+## License & credits
+
+MIT — see [LICENSE](LICENSE) for the full text and complete third-party notices.
+
+The collection builds on work by other people. Most of the base shaders and the initial
+transitions come from **[liixini/shaders](https://github.com/liixini/shaders)** (MIT,
+© liixini), originally ported to niri; I adapted them for Hyprland/Wayland. Everything else,
+by source:
+
+| Source | License | Used in |
+|---|---|---|
+| [liixini/shaders](https://github.com/liixini/shaders) | MIT | base collection, initial transitions |
+| [gl-transitions](https://github.com/gl-transitions/gl-transitions) | MIT | `circle`, `ripple` |
+| [skwd-wall](https://github.com/skwd-org/skwd-wall) | MIT | `bounce`, `colour-distance`, `crazy-parametric`, `crosshatch`, `crosswarp`, `directional`, `directional-wipe`, `fadecolor`, `flyeye`, `heat-melt`, `ink-splash`, `inkwell-drop`, `morph`, `overexposure`, `perlin`, `pixelfade-wave`, `plasma-flow`, `polar-function`, `polka-dots-curtain`, `randomsquares`, `soft-warp-fade`, `static-fade`, `voronoi-shatter`, `wave-warp` |
+| XorDev | — | `heavenly`, `ionize`, `nebula1`, `starfield` |
+| Pablo Roman Andrioli (Kali) — Star Nest | MIT | `astral` |
+| Matrix Digital Rain | — | `matrix` |
+| nasana — CineShader | — | `crumpledwave`, `electricwave` (Electric Wave) |
+| David Hoskins — Warp Speed 2 | CC BY-NC-SA 3.0 | `warpspeed`, `warpspeed2` |
+| Clearly a bug (Twigl) | CC0 | `clearlyabug`, `happyaccident` |
+| EmberCircles (Simplex 3D noise palette) | — | `embercircles` |
+| anAccount — Synapse | — | `synapse`, `synapseparametric` |
+| florian berger (flockaroo) | CC BY-NC-SA 3.0 | `moltenbismuth`, `spilled`, `cfdfluid` |
+| mherreshoff — Molten Glass | — | `moltenglass` |
+| VCR Distortion | CC BY-NC-SA 4.0 | `vhs`, `vcrdistort` |
+| ryk — ascii terminal | — | `asciiterminal` |
+| movAX13h — Bitmap to ASCII | — | `bitmapascii` |
+| studiobloom — Liquid DOS | — | `liquiddos` |
+
+Several upstream effects are **CC BY-NC-SA** — check the per-shader notices in
+[LICENSE](LICENSE) for the exact scope before redistributing commercially.
+
+Plugin: [ManofJELLO/HyprWindowShade](https://github.com/ManofJELLO/HyprWindowShade).

@@ -1,1 +1,0 @@
-embercircles_open.glsl
