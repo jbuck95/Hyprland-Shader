@@ -22,6 +22,17 @@ shaders/
 
 60 effects as pairs: every name in `open/` has its counterpart in `close/`.
 
+> **Scope.** The plugin supports far more than open and close — `+shader_move:`,
+> `+shader_resize:`, `+shader_focus:`, `+shader_unfocus:`, `+shader_workspace:`,
+> `+shader_urgent:`, `+shader_float:` / `+shader_tile:`, `+shader_fullscreen_enter:` /
+> `_exit:`, plus the steady-state `+shader_active:` / `+shader_inactive:` / `+shader_floating:`
+> / `+shader_tiled:` / `+shader_fullscreen:` and the catch-all `+shader:`. All of them work
+> normally — **this repo just doesn't ship shaders for them.** Nothing stops you pointing a
+> file from here at another tag, but these are written as one-shots driven by `progress`, so
+> they read best on `open` / `close` / `focus` / `urgent`. Motion tags are driven by gesture
+> velocity instead, which is where hand-written shaders would go. Full tag list in the
+> [plugin's README](https://github.com/ManofJELLO/HyprWindowShade#window-shaders).
+
 Copy `shaders/` to `~/.config/hypr/shaders/` (or anywhere stable — then set `shaderDir` in
 `HyprWindowShade.lua`). Window-rule paths must be absolute; `~` is not expanded.
 
